@@ -16,6 +16,17 @@ static const Bool topbar            = True;     /* False means bottom bar */
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
+#define NUMCOLORS         5
+static const char colors[NUMCOLORS][ColLast][8] = {
+  // border   foreground background
+  { "#333333", "#aaaaaa", "#000000" },  // normal
+  { "#000088", "#00ff00", "#000000" },  // good
+  { "#ff0000", "#ffff00", "#000000" },  // warning
+  { "#ff0000", "#ff0000", "#000000" },  // error
+  { "#333333", "#aaaaaa", "#000000" },  // back to normal (for endpoints that are regular)
+  // add more here
+};
+
 static const Rule rules[] = {
 	/* xprop(1):
 	 *	WM_CLASS(STRING) = instance, class

@@ -152,7 +152,7 @@ loadavg(void)
 	return smprintf("%.2f %.2f %.2f", avgs[0], avgs[1], avgs[2]);
 }
 
-char *
+float
 getbattery(char *base)
 {
 	char *path, line[513];
@@ -211,9 +211,9 @@ getbattery(char *base)
 	fclose(fd);
 
 	if (remcap < 0 || descap < 0)
-		return NULL;
+		return 0;
 
-	return smprintf("%.0f", ((float)remcap / (float)descap) * 100);
+	return ((float)remcap / (float)descap) * 100;
 }
 
 int
@@ -221,27 +221,40 @@ main(void)
 {
 	char *status;
 	char *avgs;
-	char *bat;
+	float bat;
 	char *tmutc;
 	char *tmbln;
     long vol = -1;
+    char vol_color_code = '\x02';
+    char bat_color_code = '\x02';
 
 	if (!(dpy = XOpenDisplay(NULL))) {
 		fprintf(stderr, "dwmstatus: cannot open display.\n");
 		return 1;
 	}
 
-	for (;;sleep(2)) {
+	for (;;sleep(1)) {
 		avgs = loadavg();
 		bat = getbattery("/proc/acpi/battery/BAT0");
 		tmutc = mktimes("%H:%M", tzutc);
 		tmbln = mktimes("%W %a %d %b %H:%M %Z %Y", tzamericapacific);
         audio_volume(&vol);
-		status = smprintf("[L: %s | Bat: %s%% | Vol: %i%% | UTC: %s | %s]",
-				avgs, bat, vol, tmutc, tmbln);
+        if(vol > 75)
+            vol_color_code = '\x04';
+        else
+            vol_color_code = '\x02';
+        if(bat < 25) {
+            bat_color_code = '\x04';
+        } else if (bat > 25 && bat < 35){
+            bat_color_code = '\x03';
+        }
+        else{
+            bat_color_code = '\x02';
+        }
+		status = smprintf("[L: %s | B: %c%.0f%%\x01 | V: %c%i%%\x01 | UTC: \x02%s\x01 | \x02%s\x01]",
+				avgs, bat_color_code, bat, vol_color_code, vol, tmutc, tmbln);
 		setstatus(status);
 		free(avgs);
-		free(bat);
 		free(tmutc);
 		free(tmbln);
 		free(status);
