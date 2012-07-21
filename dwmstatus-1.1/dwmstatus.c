@@ -216,6 +216,32 @@ getbattery(char *base)
 	return ((float)remcap / (float)descap) * 100;
 }
 
+char *
+battery_charging(char *base)
+{
+    char *path, line[513], state[15];
+    FILE *fd;
+
+    path = smprintf("%s/state", base);
+    fd = fopen(path, "r");
+    if (fd == NULL) {
+        perror("fopen");
+        exit(1);
+    }
+    free(path);
+    while(!feof(fd)) {
+        if (fgets(line, sizeof(line)-1, fd) == NULL)
+            break;
+        if(!strncmp(line, "charging state", 14)) {
+            if (sscanf(line+19, "%*[ ]%s%*[^\n]", &state))
+                break;
+        }
+    }
+    fclose(fd);
+
+    return smprintf("%s", state);
+}
+
 int
 main(void)
 {
@@ -224,6 +250,8 @@ main(void)
 	float bat;
 	char *tmutc;
 	char *tmbln;
+    char *bat_state;
+    char *bat_state_icon;
     long vol = -1;
     char vol_color_code = '\x02';
     char bat_color_code = '\x02';
@@ -234,6 +262,8 @@ main(void)
 	}
 
 	for (;;sleep(1)) {
+        //printf("bat state: %s\n", battery_charging("/proc/acpi/battery/BAT0"));
+        bat_state = battery_charging("/proc/acpi/battery/BAT0");
 		avgs = loadavg();
 		bat = getbattery("/proc/acpi/battery/BAT0");
 		tmutc = mktimes("%H:%M", tzutc);
@@ -251,13 +281,24 @@ main(void)
         else{
             bat_color_code = '\x02';
         }
-		status = smprintf("[L: %s | B: %c%.0f%%\x01 | V: %c%i%%\x01 | UTC: \x02%s\x01 | \x02%s\x01]",
-				avgs, bat_color_code, bat, vol_color_code, vol, tmutc, tmbln);
+        if(!strncmp(bat_state, "charging", 8)){
+            bat_state_icon = smprintf("%c^%c", '\x02', '\x01');
+        }
+        else if(!strncmp(bat_state, "charged", 7)){
+            bat_state_icon = smprintf("%c-%c", '\x02', '\x01');
+        }
+        else if(!strncmp(bat_state, "discharging", 11)){
+            bat_state_icon = smprintf("%cv%c", '\x04', '\x01');
+        }
+		status = smprintf("[L: %s | B: %c%.0f%%\x01 %s | V: %c%i%%\x01 | UTC: \x02%s\x01 | \x02%s\x01]",
+				avgs, bat_color_code, bat, bat_state_icon, vol_color_code, vol, tmutc, tmbln);
 		setstatus(status);
 		free(avgs);
 		free(tmutc);
 		free(tmbln);
 		free(status);
+        free(bat_state);
+        free(bat_state_icon);
 	}
 
 	XCloseDisplay(dpy);
