@@ -13,7 +13,6 @@ X11LIB = /usr/X11R6/lib
 # Xinerama, comment if you don't want it
 XINERAMALIBS  = -lXinerama
 XINERAMAFLAGS = -DXINERAMA
-USE=xinerama
 
 # includes and libs
 INCS = -I${X11INC}
