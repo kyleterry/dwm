@@ -165,6 +165,7 @@ getbattery(char *base)
 	path = smprintf("%s/info", base);
 	fd = fopen(path, "r");
 	if (fd == NULL) {
+        return -1;
 		perror("fopen");
 		exit(1);
 	}
@@ -189,6 +190,7 @@ getbattery(char *base)
 	path = smprintf("%s/state", base);
 	fd = fopen(path, "r");
 	if (fd == NULL) {
+        return -1;
 		perror("fopen");
 		exit(1);
 	}
@@ -225,6 +227,7 @@ battery_charging(char *base)
     path = smprintf("%s/state", base);
     fd = fopen(path, "r");
     if (fd == NULL) {
+        return -1;
         perror("fopen");
         exit(1);
     }
@@ -273,32 +276,38 @@ main(void)
             vol_color_code = '\x04';
         else
             vol_color_code = '\x02';
-        if(bat < 25) {
-            bat_color_code = '\x04';
-        } else if (bat > 25 && bat < 35){
-            bat_color_code = '\x03';
+        if(bat != -1){
+            if(bat < 25) {
+                bat_color_code = '\x04';
+            } else if (bat > 25 && bat < 35){
+                bat_color_code = '\x03';
+            }
+            else{
+                bat_color_code = '\x02';
+            }
+            if(!strncmp(bat_state, "charging", 8)){
+                bat_state_icon = smprintf("%c^%c", '\x02', '\x01');
+            }
+            else if(!strncmp(bat_state, "charged", 7)){
+                bat_state_icon = smprintf("%c-%c", '\x02', '\x01');
+            }
+            else if(!strncmp(bat_state, "discharging", 11)){
+                bat_state_icon = smprintf("%cv%c", '\x04', '\x01');
+            }
+            status = smprintf("[L: %s | B: %c%.0f%%\x01 %s | V: %c%i%%\x01 | UTC: \x02%s\x01 | \x02%s\x01]",
+                    avgs, bat_color_code, bat, bat_state_icon, vol_color_code, vol, tmutc, tmbln);
+            free(bat_state);
+            free(bat_state_icon);
         }
-        else{
-            bat_color_code = '\x02';
+        else {
+            status = smprintf("[L: %s | V: %c%i%%\x01 | UTC: \x02%s\x01 | \x02%s\x01]",
+                    avgs, vol_color_code, vol, tmutc, tmbln);
         }
-        if(!strncmp(bat_state, "charging", 8)){
-            bat_state_icon = smprintf("%c^%c", '\x02', '\x01');
-        }
-        else if(!strncmp(bat_state, "charged", 7)){
-            bat_state_icon = smprintf("%c-%c", '\x02', '\x01');
-        }
-        else if(!strncmp(bat_state, "discharging", 11)){
-            bat_state_icon = smprintf("%cv%c", '\x04', '\x01');
-        }
-		status = smprintf("[L: %s | B: %c%.0f%%\x01 %s | V: %c%i%%\x01 | UTC: \x02%s\x01 | \x02%s\x01]",
-				avgs, bat_color_code, bat, bat_state_icon, vol_color_code, vol, tmutc, tmbln);
 		setstatus(status);
 		free(avgs);
 		free(tmutc);
 		free(tmbln);
 		free(status);
-        free(bat_state);
-        free(bat_state_icon);
 	}
 
 	XCloseDisplay(dpy);
