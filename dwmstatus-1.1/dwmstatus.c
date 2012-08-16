@@ -294,13 +294,13 @@ main(void)
             else if(!strncmp(bat_state, "discharging", 11)){
                 bat_state_icon = smprintf("%cv%c", '\x04', '\x01');
             }
-            status = smprintf("[L: %s | B: %c%.0f%%\x01 %s | V: %c%i%%\x01 | UTC: \x02%s\x01 | \x02%s\x01]",
+            status = smprintf(" [ L: %s | B: %c%.0f%%\x01 %s | V: %c%i%%\x01 | UTC: \x02%s\x01 | \x02%s\x01 ]",
                     avgs, bat_color_code, bat, bat_state_icon, vol_color_code, vol, tmutc, tmbln);
             free(bat_state);
             free(bat_state_icon);
         }
         else {
-            status = smprintf("[L: %s | V: %c%i%%\x01 | UTC: \x02%s\x01 | \x02%s\x01]",
+            status = smprintf(" [ L: %s | V: %c%i%%\x01 | UTC: \x02%s\x01 | \x02%s\x01 ]",
                     avgs, vol_color_code, vol, tmutc, tmbln);
         }
 		setstatus(status);

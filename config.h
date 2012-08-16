@@ -2,12 +2,12 @@
 
 /* appearance */
 static const char font[]            = "-*-monospace-*-*-14-*-*-*-*-*-*-*";
-static const char normbordercolor[] = "#444444";
-static const char normbgcolor[]     = "#222222";
-static const char normfgcolor[]     = "#bbbbbb";
-static const char selbordercolor[]  = "#005577";
-static const char selbgcolor[]      = "#005577";
-static const char selfgcolor[]      = "#eeeeee";
+static const char normbordercolor[] = "#3b1761";
+static const char normbgcolor[]     = "#3b1761";
+static const char normfgcolor[]     = "#bb92e5";
+static const char selbordercolor[]  = "#a168dc";
+static const char selbgcolor[]      = "#3b1761";
+static const char selfgcolor[]      = "#ffffff";
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const Bool showbar           = True;     /* False means no bar */
@@ -20,9 +20,9 @@ static const char *tags[] = { "main", "monitors", "shit", "misc", "misc", "www" 
 static const char colors[NUMCOLORS][ColLast][8] = {
   // border   foreground background
   { "#333333", "#aaaaaa", "#000000" },  // normal
-  { "#000088", "#00ff00", "#000000" },  // good
-  { "#ff0000", "#ffff00", "#000000" },  // warning
-  { "#ff0000", "#ff0000", "#000000" },  // error
+  { "#000088", "#15c4ae", "#000000" },  // good
+  { "#ff0000", "#eab923", "#000000" },  // warning
+  { "#ff0000", "#c92a2c", "#000000" },  // error
   { "#333333", "#aaaaaa", "#000000" },  // back to normal (for endpoints that are regular)
   // add more here
 };
@@ -66,15 +66,15 @@ static const char *dmenucmd[] = { "dmenu_run", "-fn", font, "-nb", normbgcolor, 
 static const char *termcmd[]  = { "gnome-terminal", NULL };
 static const char *upvol[] = { "amixer", "set", "Master", "3+", NULL};
 static const char *downvol[] = { "amixer", "set", "Master", "3-", NULL};
-static const char *lockscreen[] = {"gnome-screensaver-command", "--lock", NULL};
+static const char *lockscreen[] = {"slock", NULL};
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
     { MODKEY,                       XK_F6,     spawn,          {.v = upvol } },
     { MODKEY,                       XK_F5,     spawn,          {.v = downvol } },
-	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
+	{ MODKEY,                       XK_r,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
-	{ ControlMask|Mod1Mask,         XK_l,      spawn,          {.v = lockscreen } },
+	{ MODKEY|ControlMask,           XK_l,      spawn,          {.v = lockscreen } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
