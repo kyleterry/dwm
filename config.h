@@ -14,7 +14,7 @@ static const Bool showbar           = True;     /* False means no bar */
 static const Bool topbar            = True;     /* False means bottom bar */
 
 /* tagging */
-static const char *tags[] = { "main", "monitors", "shit", "misc", "misc", "www" };
+static const char *tags[] = { "code", "irc", "shit1", "shit2", "shit3", "shit4", "www" };
 
 #define NUMCOLORS         5
 static const char colors[NUMCOLORS][ColLast][8] = {
@@ -63,7 +63,7 @@ static const Layout layouts[] = {
 
 /* commands */
 static const char *dmenucmd[] = { "dmenu_run", "-fn", font, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
-static const char *termcmd[]  = { "gnome-terminal", NULL };
+static const char *termcmd[]  = { "urxvtc", NULL };
 static const char *upvol[] = { "amixer", "set", "Master", "3+", NULL};
 static const char *downvol[] = { "amixer", "set", "Master", "3-", NULL};
 static const char *lockscreen[] = {"slock", NULL};
